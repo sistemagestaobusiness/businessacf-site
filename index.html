@@ -687,6 +687,26 @@ const LEADS_URL = "https://script.google.com/macros/s/AKfycbxZZdIauxRPFt7zd0IYVl
 })();
 
 document.querySelectorAll('a[href="#privacidade"]').forEach(a=>a.addEventListener('click',()=>{const d=document.querySelector('#privacidade details');if(d)d.open=true;}));
+/* Origem do visitante: ?origem=, utm_source, gclid (Google Ads) ou site de onde veio */
+function origemLead(){
+  let o='';
+  try{ o=sessionStorage.getItem('bacf_origem')||''; }catch(e){}
+  if(o) return o;
+  const q=new URLSearchParams(location.search);
+  if(q.get('origem')) o=q.get('origem');
+  else if(q.get('utm_source')) o=q.get('utm_source')+(q.get('utm_medium')?' / '+q.get('utm_medium'):'');
+  else if(q.get('gclid')||q.get('gad_source')) o='google ads';
+  else if(document.referrer){
+    const r=document.referrer;
+    if(/instagram/i.test(r)) o='instagram'; else if(/facebook|fb\./i.test(r)) o='facebook';
+    else if(/google\./i.test(r)) o='google (busca orgânica)'; else if(/bing\./i.test(r)) o='bing';
+    else if(!/businessacf\.com\.br/i.test(r)) { try{o=new URL(r).hostname;}catch(e){} }
+  }
+  if(!o) o='direto';
+  try{ sessionStorage.setItem('bacf_origem',o); }catch(e){}
+  return o;
+}
+origemLead();
 /* Check-up financeiro */
 (function(){
   const Q=[
@@ -743,7 +763,7 @@ document.querySelectorAll('a[href="#privacidade"]').forEach(a=>a.addEventListene
     const n=(typeof WHATSAPP!=='undefined'?WHATSAPP:'').replace(/\D/g,'');
     const leadId=Date.now().toString(36)+Math.random().toString(36).slice(2,7);
     const enviarLead=(dados)=>{ if(typeof LEADS_URL==='undefined'||!LEADS_URL) return; try{ fetch(LEADS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(dados)}); }catch(err){} };
-    enviarLead({id:leadId,nome:name,empresa:comp,cidade:city,faturamento:size,nota:nota,nivel:level,
+    enviarLead({id:leadId,origem:origemLead(),nome:name,empresa:comp,cidade:city,faturamento:size,nota:nota,nivel:level,
       pontos:weak.length?weak.map(w=>w.q.area).join(', '):'nenhum crítico',
       respostas:Q.map((q,k)=>q.area+': '+(ans[k]!=null?q.o[ans[k]]:'-')).join(' | ')});
     $('cu-wa').onclick=()=>enviarLead({acao:'whatsapp',id:leadId});
