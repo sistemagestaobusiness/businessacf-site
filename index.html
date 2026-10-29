@@ -644,6 +644,13 @@ footer .legal{margin-left:auto}
 const WHATSAPP = "5511989044506";
 /* Endereço do script da planilha de leads (Google Apps Script). Vazio = não registra. */
 const LEADS_URL = "https://script.google.com/macros/s/AKfycbxZZdIauxRPFt7zd0IYVldtL8FoDqLvFxDCXsycebhvwOpF9b6r-cC7tK4YiovCJ1Wt/exec";
+/* Google Ads: preencher com a tag (AW-...) e os rótulos das conversões. Vazio = nada é carregado. */
+const ADS_TAG = "AW-392716864";
+const ADS_CONV_CHECKUP = "";   /* rótulo da conversão "Check-up concluído" */
+const ADS_CONV_WHATSAPP = "";  /* rótulo da conversão "Clique no WhatsApp" */
+window.dataLayer=window.dataLayer||[]; function gtag(){dataLayer.push(arguments);}
+if(ADS_TAG){ const s=document.createElement('script'); s.async=true; s.src='https://www.googletagmanager.com/gtag/js?id='+ADS_TAG; document.head.appendChild(s); gtag('js',new Date()); gtag('config',ADS_TAG); }
+function conversaoAds(rotulo){ if(ADS_TAG&&rotulo){ try{ gtag('event','conversion',{send_to:ADS_TAG+'/'+rotulo}); }catch(e){} } }
 
 (function(){
   // degraus do logo, desenhados como contorno
@@ -674,6 +681,7 @@ const LEADS_URL = "https://script.google.com/macros/s/AKfycbxZZdIauxRPFt7zd0IYVl
     const pretty='('+n.slice(2,4)+') '+n.slice(4,n.length-4)+'-'+n.slice(-4);
     document.getElementById('wa-text').textContent=pretty;
     document.getElementById('wa-link').href='https://wa.me/'+n+'?text='+encodeURIComponent('Olá! Gostaria de conversar sobre a consultoria financeira.');
+    document.getElementById('wa-link').addEventListener('click',()=>conversaoAds(ADS_CONV_WHATSAPP));
     document.getElementById('wa-wrap').hidden=false; document.getElementById('wa-item').hidden=false;
   }
 
@@ -766,7 +774,8 @@ origemLead();
     enviarLead({id:leadId,origem:origemLead(),nome:name,empresa:comp,cidade:city,faturamento:size,nota:nota,nivel:level,
       pontos:weak.length?weak.map(w=>w.q.area).join(', '):'nenhum crítico',
       respostas:Q.map((q,k)=>q.area+': '+(ans[k]!=null?q.o[ans[k]]:'-')).join(' | ')});
-    $('cu-wa').onclick=()=>enviarLead({acao:'whatsapp',id:leadId});
+    conversaoAds(ADS_CONV_CHECKUP);
+    $('cu-wa').onclick=()=>{enviarLead({acao:'whatsapp',id:leadId});conversaoAds(ADS_CONV_WHATSAPP);};
     $('cu-wa').href=n?('https://wa.me/'+n+'?text='+encodeURIComponent(msg)):'#contato';
     show('cu-result');
     requestAnimationFrame(()=>{$('cu-ring').style.strokeDashoffset=String(326.7*(1-score/10));});
