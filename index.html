@@ -646,8 +646,8 @@ const WHATSAPP = "5511989044506";
 const LEADS_URL = "https://script.google.com/macros/s/AKfycbxZZdIauxRPFt7zd0IYVldtL8FoDqLvFxDCXsycebhvwOpF9b6r-cC7tK4YiovCJ1Wt/exec";
 /* Google Ads: preencher com a tag (AW-...) e os rótulos das conversões. Vazio = nada é carregado. */
 const ADS_TAG = "AW-392716864";
-const ADS_CONV_CHECKUP = "";   /* rótulo da conversão "Check-up concluído" */
-const ADS_CONV_WHATSAPP = "";  /* rótulo da conversão "Clique no WhatsApp" */
+const ADS_CONV_CHECKUP = "hm5QCP2Su60dEMDEobsB";   /* rótulo da conversão "Check-up concluído" */
+const ADS_CONV_WHATSAPP = "9fMICNvuv60dEMDEobsB";  /* rótulo da conversão "Clique no WhatsApp" */
 window.dataLayer=window.dataLayer||[]; function gtag(){dataLayer.push(arguments);}
 if(ADS_TAG){ const s=document.createElement('script'); s.async=true; s.src='https://www.googletagmanager.com/gtag/js?id='+ADS_TAG; document.head.appendChild(s); gtag('js',new Date()); gtag('config',ADS_TAG); }
 function conversaoAds(rotulo){ if(ADS_TAG&&rotulo){ try{ gtag('event','conversion',{send_to:ADS_TAG+'/'+rotulo}); }catch(e){} } }
